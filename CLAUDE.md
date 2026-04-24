@@ -10,15 +10,14 @@ same session as the change.** Coverage and green suites are not evidence.
 
 ### Acceptance demo for this module
 
-<!-- TODO: replace this block with the exact command(s) that exercise this
-     module end-to-end against real dependencies, and the expected output.
-     The commands must run the real artifact (built binary, deployed
-     container, real service) — no in-process fakes, no mocks, no
-     `httptest.NewServer`, no Robolectric, no JSDOM as proof of done. -->
-
 ```bash
-# TODO
+# HiPlan + MCTS + Tree-of-Thoughts planning algorithms
+cd Planning && GOMAXPROCS=2 nice -n 19 go test -count=1 -race -v \
+  -run 'TestFullPlanningWorkflow_HiPlan_E2E|TestFullPlanningWorkflow_MCTS_E2E|TestFullPlanningWorkflow_TreeOfThoughts_E2E' \
+  ./tests/e2e/...
 ```
+Expect: three E2E PASS — each algorithm produces a valid plan for its test task.
+
 
 ## Overview
 
