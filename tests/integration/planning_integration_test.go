@@ -182,7 +182,7 @@ func (m *mockThoughtEvaluator) IsTerminal(_ context.Context, thought *planning.T
 
 func TestHiPlan_CreateAndExecutePlan_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	gen := &mockMilestoneGenerator{}
@@ -212,7 +212,7 @@ func TestHiPlan_CreateAndExecutePlan_Integration(t *testing.T) {
 
 func TestHiPlan_SequentialExecution_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	gen := &mockMilestoneGenerator{}
@@ -240,7 +240,7 @@ func TestHiPlan_SequentialExecution_Integration(t *testing.T) {
 
 func TestHiPlan_FailedSteps_AdaptivePlanning_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	gen := &mockMilestoneGenerator{}
@@ -265,7 +265,7 @@ func TestHiPlan_FailedSteps_AdaptivePlanning_Integration(t *testing.T) {
 
 func TestMCTS_SearchAndExplore_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultMCTSConfig()
@@ -291,7 +291,7 @@ func TestMCTS_SearchAndExplore_Integration(t *testing.T) {
 
 func TestMCTS_WithRolloutPolicy_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultMCTSConfig()
@@ -315,7 +315,7 @@ func TestMCTS_WithRolloutPolicy_Integration(t *testing.T) {
 
 func TestTreeOfThoughts_BeamSearch_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultTreeOfThoughtsConfig()
@@ -344,7 +344,7 @@ func TestTreeOfThoughts_BeamSearch_Integration(t *testing.T) {
 
 func TestTreeOfThoughts_BFSSearch_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultTreeOfThoughtsConfig()
@@ -368,7 +368,7 @@ func TestTreeOfThoughts_BFSSearch_Integration(t *testing.T) {
 
 func TestTreeOfThoughts_DFSSearch_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultTreeOfThoughtsConfig()
@@ -392,7 +392,7 @@ func TestTreeOfThoughts_DFSSearch_Integration(t *testing.T) {
 
 func TestHiPlan_LibraryOperations_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	gen := &mockMilestoneGenerator{}
@@ -420,7 +420,7 @@ func TestHiPlan_LibraryOperations_Integration(t *testing.T) {
 
 func TestHiPlan_WithDependencies_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	gen := &mockMilestoneGenerator{
@@ -461,7 +461,7 @@ func TestHiPlan_WithDependencies_Integration(t *testing.T) {
 
 func TestMCTS_UCTValue_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultMCTSConfig()
@@ -490,7 +490,7 @@ func TestMCTS_UCTValue_Integration(t *testing.T) {
 
 func TestAllThreeAlgorithms_Integration(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
+		t.Skip("skipping integration test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	ctx := context.Background()

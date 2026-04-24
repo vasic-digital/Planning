@@ -164,7 +164,7 @@ func (e *safeThoughtEval) IsTerminal(_ context.Context, thought *planning.Though
 
 func TestHiPlan_NilLogger_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultHiPlanConfig()
@@ -179,7 +179,7 @@ func TestHiPlan_NilLogger_Security(t *testing.T) {
 
 func TestHiPlan_EmptyGoal_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultHiPlanConfig()
@@ -195,7 +195,7 @@ func TestHiPlan_EmptyGoal_Security(t *testing.T) {
 
 func TestHiPlan_GeneratorError_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultHiPlanConfig()
@@ -210,7 +210,7 @@ func TestHiPlan_GeneratorError_Security(t *testing.T) {
 
 func TestHiPlan_VeryLargeGoalString_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultHiPlanConfig()
@@ -226,7 +226,7 @@ func TestHiPlan_VeryLargeGoalString_Security(t *testing.T) {
 
 func TestHiPlan_NilExecutorResult_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultHiPlanConfig()
@@ -248,7 +248,7 @@ func TestHiPlan_NilExecutorResult_Security(t *testing.T) {
 
 func TestHiPlan_ZeroConfig_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.HiPlanConfig{
@@ -269,7 +269,7 @@ func TestHiPlan_ZeroConfig_Security(t *testing.T) {
 
 func TestHiPlan_CancelledContext_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultHiPlanConfig()
@@ -288,7 +288,7 @@ func TestHiPlan_CancelledContext_Security(t *testing.T) {
 
 func TestMCTS_NilLogger_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultMCTSConfig()
@@ -301,7 +301,7 @@ func TestMCTS_NilLogger_Security(t *testing.T) {
 
 func TestMCTS_ZeroIterations_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultMCTSConfig()
@@ -318,7 +318,7 @@ func TestMCTS_ZeroIterations_Security(t *testing.T) {
 
 func TestMCTS_ZeroDepth_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultMCTSConfig()
@@ -336,7 +336,7 @@ func TestMCTS_ZeroDepth_Security(t *testing.T) {
 
 func TestMCTS_UCTValue_UnvisitedNode_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultMCTSConfig()
@@ -349,7 +349,7 @@ func TestMCTS_UCTValue_UnvisitedNode_Security(t *testing.T) {
 
 func TestMCTS_UCTValue_ZeroParentVisits_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultMCTSConfig()
@@ -363,7 +363,7 @@ func TestMCTS_UCTValue_ZeroParentVisits_Security(t *testing.T) {
 
 func TestMCTSNode_ZeroVisits_AverageReward_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	node := &planning.MCTSNode{ID: "zero"}
@@ -372,7 +372,7 @@ func TestMCTSNode_ZeroVisits_AverageReward_Security(t *testing.T) {
 
 func TestTreeOfThoughts_NilLogger_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultTreeOfThoughtsConfig()
@@ -385,7 +385,7 @@ func TestTreeOfThoughts_NilLogger_Security(t *testing.T) {
 
 func TestTreeOfThoughts_EmptyProblem_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultTreeOfThoughtsConfig()
@@ -403,7 +403,7 @@ func TestTreeOfThoughts_EmptyProblem_Security(t *testing.T) {
 
 func TestTreeOfThoughts_ZeroBranches_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultTreeOfThoughtsConfig()
@@ -421,7 +421,7 @@ func TestTreeOfThoughts_ZeroBranches_Security(t *testing.T) {
 
 func TestTreeOfThoughts_UnknownStrategy_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultTreeOfThoughtsConfig()
@@ -442,7 +442,7 @@ func TestTreeOfThoughts_UnknownStrategy_Security(t *testing.T) {
 
 func TestTreeOfThoughts_LowPruneThreshold_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultTreeOfThoughtsConfig()
@@ -462,7 +462,7 @@ func TestTreeOfThoughts_LowPruneThreshold_Security(t *testing.T) {
 
 func TestToTResult_GetSolutionContent_Empty_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	result := &planning.ToTResult{
@@ -474,7 +474,7 @@ func TestToTResult_GetSolutionContent_Empty_Security(t *testing.T) {
 
 func TestDefaultConfigs_Sanity_Security(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping security test in short mode")
+		t.Skip("skipping security test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	hiConfig := planning.DefaultHiPlanConfig()
