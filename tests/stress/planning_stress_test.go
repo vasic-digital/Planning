@@ -147,7 +147,7 @@ func (e *stressThoughtEval) IsTerminal(_ context.Context, thought *planning.Thou
 
 func TestHiPlan_ConcurrentPlanCreation_Stress(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping stress test in short mode")
+		t.Skip("skipping stress test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	const goroutines = 75
@@ -185,7 +185,7 @@ func TestHiPlan_ConcurrentPlanCreation_Stress(t *testing.T) {
 
 func TestHiPlan_ConcurrentPlanExecution_Stress(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping stress test in short mode")
+		t.Skip("skipping stress test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	const goroutines = 50
@@ -231,7 +231,7 @@ func TestHiPlan_ConcurrentPlanExecution_Stress(t *testing.T) {
 
 func TestHiPlan_ConcurrentLibraryAccess_Stress(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping stress test in short mode")
+		t.Skip("skipping stress test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	const goroutines = 100
@@ -279,7 +279,7 @@ func TestHiPlan_ConcurrentLibraryAccess_Stress(t *testing.T) {
 
 func TestMCTS_ConcurrentSearches_Stress(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping stress test in short mode")
+		t.Skip("skipping stress test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	const goroutines = 60
@@ -317,7 +317,7 @@ func TestMCTS_ConcurrentSearches_Stress(t *testing.T) {
 
 func TestMCTSNode_ConcurrentRewardUpdates_Stress(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping stress test in short mode")
+		t.Skip("skipping stress test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	const goroutines = 100
@@ -345,7 +345,7 @@ func TestMCTSNode_ConcurrentRewardUpdates_Stress(t *testing.T) {
 
 func TestTreeOfThoughts_ConcurrentSolves_Stress(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping stress test in short mode")
+		t.Skip("skipping stress test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	const goroutines = 50
@@ -384,7 +384,7 @@ func TestTreeOfThoughts_ConcurrentSolves_Stress(t *testing.T) {
 
 func TestHiPlan_RapidCreateAndExecute_Stress(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping stress test in short mode")
+		t.Skip("skipping stress test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	const goroutines = 80
@@ -425,7 +425,7 @@ func TestHiPlan_RapidCreateAndExecute_Stress(t *testing.T) {
 
 func TestMixedAlgorithms_ConcurrentExecution_Stress(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping stress test in short mode")
+		t.Skip("skipping stress test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	const goroutinesPerAlgo = 25

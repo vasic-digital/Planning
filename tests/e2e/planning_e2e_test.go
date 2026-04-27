@@ -187,7 +187,7 @@ func (e *e2eThoughtEvaluator) IsTerminal(_ context.Context, thought *planning.Th
 
 func TestFullPlanningWorkflow_HiPlan_E2E(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping e2e test in short mode")
+		t.Skip("skipping e2e test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	gen := &e2eMilestoneGenerator{stepCount: 3}
@@ -241,7 +241,7 @@ func TestFullPlanningWorkflow_HiPlan_E2E(t *testing.T) {
 
 func TestFullPlanningWorkflow_MCTS_E2E(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping e2e test in short mode")
+		t.Skip("skipping e2e test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultMCTSConfig()
@@ -276,7 +276,7 @@ func TestFullPlanningWorkflow_MCTS_E2E(t *testing.T) {
 
 func TestFullPlanningWorkflow_TreeOfThoughts_E2E(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping e2e test in short mode")
+		t.Skip("skipping e2e test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	config := planning.DefaultTreeOfThoughtsConfig()
@@ -323,7 +323,7 @@ func TestFullPlanningWorkflow_TreeOfThoughts_E2E(t *testing.T) {
 
 func TestFullWorkflow_AllAlgorithms_SameProblem_E2E(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping e2e test in short mode")
+		t.Skip("skipping e2e test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	ctx := context.Background()
@@ -368,7 +368,7 @@ func TestFullWorkflow_AllAlgorithms_SameProblem_E2E(t *testing.T) {
 
 func TestHiPlan_ExecuteStep_E2E(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping e2e test in short mode")
+		t.Skip("skipping e2e test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	gen := &e2eMilestoneGenerator{}
@@ -397,7 +397,7 @@ func TestHiPlan_ExecuteStep_E2E(t *testing.T) {
 
 func TestMCTSNode_RewardAccumulation_E2E(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping e2e test in short mode")
+		t.Skip("skipping e2e test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	node := &planning.MCTSNode{
@@ -418,7 +418,7 @@ func TestMCTSNode_RewardAccumulation_E2E(t *testing.T) {
 
 func TestHiPlan_ContextCancellation_E2E(t *testing.T) {
 	if testing.Short() {
-		t.Skip("skipping e2e test in short mode")
+		t.Skip("skipping e2e test in short mode")  // SKIP-OK: #short-mode
 	}
 
 	gen := &e2eMilestoneGenerator{stepCount: 100}
