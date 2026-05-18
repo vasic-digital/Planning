@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+
+	"digital.vasic.planning/pkg/i18n"
 )
 
 // MilestoneState represents the state of a milestone
@@ -150,6 +152,13 @@ type HiPlan struct {
 	milestoneLibrary map[string]*Milestone
 	mu               sync.RWMutex
 	logger           *logrus.Logger
+	// translator is the CONST-046 user-facing-string seam. nil means
+	// "use NoopTranslator + bundled English fallback" — that path keeps
+	// the module standalone-buildable per CONST-051(B). Consuming
+	// projects wire a real Translator via SetTranslator after
+	// construction; the constructor signature is unchanged so existing
+	// callers keep working.
+	translator i18n.Translator
 }
 
 // NewHiPlan creates a new HiPlan instance
@@ -165,7 +174,24 @@ func NewHiPlan(config HiPlanConfig, generator MilestoneGenerator, executor StepE
 		executor:         executor,
 		milestoneLibrary: make(map[string]*Milestone),
 		logger:           logger,
+		translator:       i18n.Default(),
 	}
+}
+
+// SetTranslator wires a consuming-project Translator. Callers MAY skip
+// this call; the NoopTranslator default (set by NewHiPlan) routes
+// every user-facing string through the bundled English fallback, so
+// the module continues to work uncoupled per CONST-051(B). A real
+// Translator (YAML/JSON-loading, locale-aware) replaces the noop and
+// drives the user-visible output per CONST-046.
+func (h *HiPlan) SetTranslator(tr i18n.Translator) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	if tr == nil {
+		h.translator = i18n.Default()
+		return
+	}
+	h.translator = tr
 }
 
 // CreatePlan creates a hierarchical plan for a goal
@@ -524,9 +550,16 @@ func (h *HiPlan) ExecuteStep(ctx context.Context, step *PlanStep, hints []string
 	}
 
 	if stepResult == nil {
+		// CONST-046: error message routed through Translator at call site;
+		// NoopTranslator path returns the bundled English fallback.
 		stepResult = &StepResult{
 			Success: false,
-			Error:   "execution failed",
+			Error: resolveOrFallback(
+				ctx,
+				h.translator,
+				"planning_step_execution_failed",
+				fallbackStepExecutionFailed,
+			),
 		}
 		if execErr != nil {
 			stepResult.Error = execErr.Error()
@@ -579,6 +612,11 @@ func (r *PlanResult) MarshalJSON() ([]byte, error) {
 type LLMMilestoneGenerator struct {
 	generateFunc func(ctx context.Context, prompt string) (string, error)
 	logger       *logrus.Logger
+	// translator routes user-facing prompt templates through the
+	// CONST-046 i18n seam. Defaults to NoopTranslator so the standalone
+	// module keeps working uncoupled per CONST-051(B). Consuming
+	// projects wire a real Translator via SetTranslator.
+	translator i18n.Translator
 }
 
 // NewLLMMilestoneGenerator creates a new LLM-based milestone generator
@@ -586,21 +624,32 @@ func NewLLMMilestoneGenerator(generateFunc func(ctx context.Context, prompt stri
 	return &LLMMilestoneGenerator{
 		generateFunc: generateFunc,
 		logger:       logger,
+		translator:   i18n.Default(),
 	}
+}
+
+// SetTranslator wires a consuming-project Translator. nil resets to
+// the standalone NoopTranslator default.
+func (g *LLMMilestoneGenerator) SetTranslator(tr i18n.Translator) {
+	if tr == nil {
+		g.translator = i18n.Default()
+		return
+	}
+	g.translator = tr
 }
 
 // GenerateMilestones generates milestones for a goal
 func (g *LLMMilestoneGenerator) GenerateMilestones(ctx context.Context, goal string) ([]*Milestone, error) {
-	prompt := fmt.Sprintf(`Create a hierarchical plan for the following goal:
-"%s"
-
-Generate 3-5 high-level milestones that need to be achieved.
-For each milestone, provide:
-1. A clear name
-2. A description
-3. Any dependencies on other milestones (by number)
-
-Format as numbered list with details.`, goal)
+	// CONST-046: prompt routed through Translator. NoopTranslator path
+	// produces the bundled English template; a real translator returns
+	// locale-appropriate text.
+	prompt := resolveOrFallback(
+		ctx,
+		g.translator,
+		"planning_milestone_prompt_intro",
+		fallbackMilestonePromptIntro,
+		goal,
+	)
 
 	response, err := g.generateFunc(ctx, prompt)
 	if err != nil {
@@ -631,16 +680,16 @@ Format as numbered list with details.`, goal)
 
 // GenerateSteps generates steps for a milestone
 func (g *LLMMilestoneGenerator) GenerateSteps(ctx context.Context, milestone *Milestone) ([]*PlanStep, error) {
-	prompt := fmt.Sprintf(`For the milestone: "%s"
-Description: %s
-
-Generate 3-7 specific action steps to complete this milestone.
-Each step should be:
-1. Concrete and actionable
-2. Independently executable
-3. Verifiable for completion
-
-Format as numbered list.`, milestone.Name, milestone.Description)
+	// CONST-046: prompt routed through Translator. NoopTranslator path
+	// produces the bundled English template; a real translator returns
+	// locale-appropriate text.
+	prompt := resolveOrFallback(
+		ctx,
+		g.translator,
+		"planning_step_prompt_intro",
+		fallbackStepPromptIntro,
+		milestone.Name, milestone.Description,
+	)
 
 	response, err := g.generateFunc(ctx, prompt)
 	if err != nil {

@@ -1,0 +1,38 @@
+# Planning module — English bundle (active).
+# Per CONST-046, every user-facing string in the Planning module
+# resolves through pkg/i18n.Translator at the call site. This
+# bundle is the English fallback consumed when a consuming project
+# wires a YAML-loading translator. The NoopTranslator (default,
+# standalone) returns the msgID directly; the call site assembles
+# the user-visible string from the literal embedded alongside the
+# migration (see planning/i18n_defaults.go).
+#
+# IDs are prefixed `planning_` per the CONST-046 cross-submodule
+# convention so a single consuming-project bundle can merge entries
+# from many submodules without collision.
+schema_version: 1
+locale: en
+entries:
+  planning_milestone_prompt_intro: |-
+    Create a hierarchical plan for the following goal:
+    "%s"
+
+    Generate 3-5 high-level milestones that need to be achieved.
+    For each milestone, provide:
+    1. A clear name
+    2. A description
+    3. Any dependencies on other milestones (by number)
+
+    Format as numbered list with details.
+  planning_step_prompt_intro: |-
+    For the milestone: "%s"
+    Description: %s
+
+    Generate 3-7 specific action steps to complete this milestone.
+    Each step should be:
+    1. Concrete and actionable
+    2. Independently executable
+    3. Verifiable for completion
+
+    Format as numbered list.
+  planning_step_execution_failed: "execution failed"
