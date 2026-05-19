@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+
+	"digital.vasic.planning/pkg/i18n"
 )
 
 // MCTSNodeState represents the state of an MCTS node
@@ -516,6 +518,11 @@ func (r *MCTSResult) MarshalJSON() ([]byte, error) {
 type CodeActionGenerator struct {
 	generateFunc func(ctx context.Context, prompt string) (string, error)
 	logger       *logrus.Logger
+	// translator routes user-facing prompt templates through the
+	// CONST-046 i18n seam. Defaults to NoopTranslator so the standalone
+	// module keeps working uncoupled per CONST-051(B). Consuming
+	// projects wire a real Translator via SetTranslator.
+	translator i18n.Translator
 }
 
 // NewCodeActionGenerator creates a new code action generator
@@ -523,7 +530,18 @@ func NewCodeActionGenerator(generateFunc func(ctx context.Context, prompt string
 	return &CodeActionGenerator{
 		generateFunc: generateFunc,
 		logger:       logger,
+		translator:   i18n.Default(),
 	}
+}
+
+// SetTranslator wires a consuming-project Translator. nil resets to
+// the standalone NoopTranslator default. CONST-046 seam.
+func (g *CodeActionGenerator) SetTranslator(tr i18n.Translator) {
+	if tr == nil {
+		g.translator = i18n.Default()
+		return
+	}
+	g.translator = tr
 }
 
 // GetActions returns possible code actions from current state
@@ -533,12 +551,16 @@ func (g *CodeActionGenerator) GetActions(ctx context.Context, state interface{})
 		stateStr = fmt.Sprintf("%v", state)
 	}
 
-	prompt := fmt.Sprintf(`Given the current code state:
-%s
-
-Generate 3-5 possible next coding actions or modifications.
-Each action should be distinct and meaningful.
-Format: one action per line.`, stateStr)
+	// CONST-046: prompt routed through Translator. NoopTranslator path
+	// produces the bundled English template; a real translator returns
+	// locale-appropriate text.
+	prompt := resolveOrFallback(
+		ctx,
+		g.translator,
+		"planning_mcts_actions_prompt_intro",
+		fallbackMCTSActionsPromptIntro,
+		stateStr,
+	)
 
 	response, err := g.generateFunc(ctx, prompt)
 	if err != nil {
@@ -555,12 +577,16 @@ func (g *CodeActionGenerator) ApplyAction(ctx context.Context, state interface{}
 		stateStr = fmt.Sprintf("%v", state)
 	}
 
-	prompt := fmt.Sprintf(`Current code state:
-%s
-
-Apply this action: %s
-
-Return the updated code state after applying the action.`, stateStr, action)
+	// CONST-046: prompt routed through Translator. NoopTranslator path
+	// produces the bundled English template; a real translator returns
+	// locale-appropriate text.
+	prompt := resolveOrFallback(
+		ctx,
+		g.translator,
+		"planning_mcts_apply_action_prompt_intro",
+		fallbackMCTSApplyActionPromptIntro,
+		stateStr, action,
+	)
 
 	return g.generateFunc(ctx, prompt)
 }

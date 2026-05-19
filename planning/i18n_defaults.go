@@ -41,6 +41,74 @@ Each step should be:
 Format as numbered list.`
 
 	fallbackStepExecutionFailed = "execution failed"
+
+	// --- Round 2 (CONST-046 Phase 4 round 96) ---
+	// 7 additional user-facing strings: hints prompt, MCTS code-action
+	// prompts (2), Tree-of-Thoughts prompts (3), evaluator prompt, the
+	// HiPlan context label, plus a locale-overridable terminal-keyword
+	// CSV. All routed through resolveOrFallback below.
+
+	fallbackHintsPromptIntro = `Given this context:
+%s
+
+Generate 2-3 specific hints or tips to help execute this step successfully.
+Focus on:
+- Edge cases to consider
+- Best practices
+- Common pitfalls to avoid
+
+Format as bullet points.`
+
+	fallbackMCTSActionsPromptIntro = `Given the current code state:
+%s
+
+Generate 3-5 possible next coding actions or modifications.
+Each action should be distinct and meaningful.
+Format: one action per line.`
+
+	fallbackMCTSApplyActionPromptIntro = `Current code state:
+%s
+
+Apply this action: %s
+
+Return the updated code state after applying the action.`
+
+	fallbackToTThoughtsPromptIntro = `Given the current reasoning step:
+"%s"
+
+Generate %d distinct next steps or approaches to continue solving this problem.
+Each step should be different and explore a unique angle.
+Format each step on a new line starting with a number.`
+
+	fallbackToTInitialThoughtsPromptIntro = `Given the problem:
+"%s"
+
+Generate %d distinct initial approaches or strategies to solve this problem.
+Each approach should be different and explore a unique angle.
+Format each approach on a new line starting with a number.`
+
+	fallbackToTEvaluatePromptIntro = `Evaluate the following reasoning step on a scale of 0.0 to 1.0:
+"%s"
+
+Consider:
+- Logical validity
+- Progress toward solution
+- Feasibility
+- Clarity
+
+Respond with only a number between 0.0 and 1.0.`
+
+	fallbackHiPlanContextLabel = `Milestone: %s
+Description: %s
+Step: %s
+Action: %s`
+
+	// fallbackToTTerminalKeywords is the English-locale CSV of tokens
+	// the IsTerminal detector matches against. Consuming projects MUST
+	// override via the i18n_tot_terminal_keywords msgID for non-English
+	// locales, otherwise the detector silently fails to recognise
+	// solution states the LLM emits in the user's language.
+	fallbackToTTerminalKeywords = "solution,answer,result,conclusion,final"
 )
 
 // resolveOrFallback routes a user-facing string through tr.T. When the

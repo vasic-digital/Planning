@@ -8,10 +8,13 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/sirupsen/logrus"
+
+	"digital.vasic.planning/pkg/i18n"
 )
 
 // ThoughtState represents the state of a thought in the tree
@@ -525,6 +528,11 @@ type LLMThoughtGenerator struct {
 	generateFunc func(ctx context.Context, prompt string) (string, error)
 	temperature  float64
 	logger       *logrus.Logger
+	// translator routes user-facing prompt templates through the
+	// CONST-046 i18n seam. Defaults to NoopTranslator so the standalone
+	// module keeps working uncoupled per CONST-051(B). Consuming
+	// projects wire a real Translator via SetTranslator.
+	translator i18n.Translator
 }
 
 // NewLLMThoughtGenerator creates a new LLM-based thought generator
@@ -533,17 +541,32 @@ func NewLLMThoughtGenerator(generateFunc func(ctx context.Context, prompt string
 		generateFunc: generateFunc,
 		temperature:  temperature,
 		logger:       logger,
+		translator:   i18n.Default(),
 	}
+}
+
+// SetTranslator wires a consuming-project Translator. nil resets to
+// the standalone NoopTranslator default. CONST-046 seam.
+func (g *LLMThoughtGenerator) SetTranslator(tr i18n.Translator) {
+	if tr == nil {
+		g.translator = i18n.Default()
+		return
+	}
+	g.translator = tr
 }
 
 // GenerateThoughts generates child thoughts using LLM
 func (g *LLMThoughtGenerator) GenerateThoughts(ctx context.Context, parent *Thought, count int) ([]*Thought, error) {
-	prompt := fmt.Sprintf(`Given the current reasoning step:
-"%s"
-
-Generate %d distinct next steps or approaches to continue solving this problem.
-Each step should be different and explore a unique angle.
-Format each step on a new line starting with a number.`, parent.Content, count)
+	// CONST-046: prompt routed through Translator. NoopTranslator path
+	// produces the bundled English template; a real translator returns
+	// locale-appropriate text.
+	prompt := resolveOrFallback(
+		ctx,
+		g.translator,
+		"planning_tot_thoughts_prompt_intro",
+		fallbackToTThoughtsPromptIntro,
+		parent.Content, count,
+	)
 
 	response, err := g.generateFunc(ctx, prompt)
 	if err != nil {
@@ -574,12 +597,16 @@ Format each step on a new line starting with a number.`, parent.Content, count)
 
 // GenerateInitialThoughts generates initial thoughts from a problem
 func (g *LLMThoughtGenerator) GenerateInitialThoughts(ctx context.Context, problem string, count int) ([]*Thought, error) {
-	prompt := fmt.Sprintf(`Given the problem:
-"%s"
-
-Generate %d distinct initial approaches or strategies to solve this problem.
-Each approach should be different and explore a unique angle.
-Format each approach on a new line starting with a number.`, problem, count)
+	// CONST-046: prompt routed through Translator. NoopTranslator path
+	// produces the bundled English template; a real translator returns
+	// locale-appropriate text.
+	prompt := resolveOrFallback(
+		ctx,
+		g.translator,
+		"planning_tot_initial_thoughts_prompt_intro",
+		fallbackToTInitialThoughtsPromptIntro,
+		problem, count,
+	)
 
 	response, err := g.generateFunc(ctx, prompt)
 	if err != nil {
@@ -613,29 +640,74 @@ type LLMThoughtEvaluator struct {
 	evaluateFunc     func(ctx context.Context, prompt string) (string, error)
 	terminalKeywords []string
 	logger           *logrus.Logger
+	// translator routes both the evaluation prompt AND the terminal-
+	// keyword list through the CONST-046 i18n seam. The keyword list
+	// is locale-critical: an LLM responding in Serbian will never emit
+	// "solution" / "answer", so the English defaults silently bypass
+	// IsTerminal — exactly the bluff CONST-046 forbids. Consuming
+	// projects MUST wire a real Translator for non-English locales.
+	translator i18n.Translator
 }
 
 // NewLLMThoughtEvaluator creates a new LLM-based thought evaluator
 func NewLLMThoughtEvaluator(evaluateFunc func(ctx context.Context, prompt string) (string, error), logger *logrus.Logger) *LLMThoughtEvaluator {
 	return &LLMThoughtEvaluator{
 		evaluateFunc:     evaluateFunc,
-		terminalKeywords: []string{"solution", "answer", "result", "conclusion", "final"},
+		terminalKeywords: parseTerminalKeywords(fallbackToTTerminalKeywords),
 		logger:           logger,
+		translator:       i18n.Default(),
 	}
+}
+
+// SetTranslator wires a consuming-project Translator. nil resets to
+// the standalone NoopTranslator default. The terminal-keyword list is
+// re-resolved through the new translator at the same time so the
+// IsTerminal detector immediately matches the new locale's tokens.
+// CONST-046 seam.
+func (e *LLMThoughtEvaluator) SetTranslator(tr i18n.Translator) {
+	if tr == nil {
+		e.translator = i18n.Default()
+		e.terminalKeywords = parseTerminalKeywords(fallbackToTTerminalKeywords)
+		return
+	}
+	e.translator = tr
+	resolved := resolveOrFallback(
+		context.Background(),
+		tr,
+		"planning_tot_terminal_keywords",
+		fallbackToTTerminalKeywords,
+	)
+	e.terminalKeywords = parseTerminalKeywords(resolved)
+}
+
+// parseTerminalKeywords splits a CSV keyword list into a normalised
+// lower-case slice. Empty / whitespace-only entries are dropped so the
+// English default ("solution,answer,result,conclusion,final") and any
+// translated bundle yield the same shape.
+func parseTerminalKeywords(csv string) []string {
+	parts := strings.Split(csv, ",")
+	kws := make([]string, 0, len(parts))
+	for _, p := range parts {
+		t := strings.ToLower(strings.TrimSpace(p))
+		if t != "" {
+			kws = append(kws, t)
+		}
+	}
+	return kws
 }
 
 // EvaluateThought scores a thought
 func (e *LLMThoughtEvaluator) EvaluateThought(ctx context.Context, thought *Thought) (float64, error) {
-	prompt := fmt.Sprintf(`Evaluate the following reasoning step on a scale of 0.0 to 1.0:
-"%s"
-
-Consider:
-- Logical validity
-- Progress toward solution
-- Feasibility
-- Clarity
-
-Respond with only a number between 0.0 and 1.0.`, thought.Content)
+	// CONST-046: prompt routed through Translator. NoopTranslator path
+	// produces the bundled English template; a real translator returns
+	// locale-appropriate text.
+	prompt := resolveOrFallback(
+		ctx,
+		e.translator,
+		"planning_tot_evaluate_prompt_intro",
+		fallbackToTEvaluatePromptIntro,
+		thought.Content,
+	)
 
 	response, err := e.evaluateFunc(ctx, prompt)
 	if err != nil {

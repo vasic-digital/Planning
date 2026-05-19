@@ -490,9 +490,16 @@ func (h *HiPlan) executeMilestone(ctx context.Context, milestone *Milestone) *Mi
 		}
 
 		if stepResult == nil {
+			// CONST-046: error message routed through Translator at call
+			// site; NoopTranslator path returns the bundled English fallback.
 			stepResult = &StepResult{
 				Success: false,
-				Error:   "execution failed",
+				Error: resolveOrFallback(
+					ctx,
+					h.translator,
+					"planning_step_execution_failed",
+					fallbackStepExecutionFailed,
+				),
 			}
 		}
 
@@ -569,10 +576,19 @@ func (h *HiPlan) ExecuteStep(ctx context.Context, step *PlanStep, hints []string
 	return stepResult, execErr
 }
 
-// buildContext builds context string for hint generation
+// buildContext builds context string for hint generation.
+// CONST-046: the label template is routed through the Translator so
+// non-English locales receive the locale-appropriate context header
+// (Milestone:/Description:/Step:/Action: are user-visible when this
+// string reaches the LLM and surfaces in the LLM's reasoning).
 func (h *HiPlan) buildContext(milestone *Milestone, step *PlanStep) string {
-	return fmt.Sprintf("Milestone: %s\nDescription: %s\nStep: %s\nAction: %s",
-		milestone.Name, milestone.Description, step.ID, step.Action)
+	return resolveOrFallback(
+		context.Background(),
+		h.translator,
+		"planning_hiplan_context_label",
+		fallbackHiPlanContextLabel,
+		milestone.Name, milestone.Description, step.ID, step.Action,
+	)
 }
 
 // MilestoneResult holds the result of executing a milestone
@@ -718,18 +734,18 @@ func (g *LLMMilestoneGenerator) GenerateSteps(ctx context.Context, milestone *Mi
 	return steps, nil
 }
 
-// GenerateHints generates contextual hints for a step
-func (g *LLMMilestoneGenerator) GenerateHints(ctx context.Context, step *PlanStep, context string) ([]string, error) {
-	prompt := fmt.Sprintf(`Given this context:
-%s
-
-Generate 2-3 specific hints or tips to help execute this step successfully.
-Focus on:
-- Edge cases to consider
-- Best practices
-- Common pitfalls to avoid
-
-Format as bullet points.`, context)
+// GenerateHints generates contextual hints for a step.
+// CONST-046: prompt routed through Translator. NoopTranslator path
+// produces the bundled English template; a real translator returns
+// locale-appropriate text.
+func (g *LLMMilestoneGenerator) GenerateHints(ctx context.Context, step *PlanStep, contextStr string) ([]string, error) {
+	prompt := resolveOrFallback(
+		ctx,
+		g.translator,
+		"planning_hints_prompt_intro",
+		fallbackHintsPromptIntro,
+		contextStr,
+	)
 
 	response, err := g.generateFunc(ctx, prompt)
 	if err != nil {
