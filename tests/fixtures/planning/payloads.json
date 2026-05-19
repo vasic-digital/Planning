@@ -1,0 +1,75 @@
+{
+  "_comment": "Round-270 bilingual fixture for digital.vasic.planning. Five locales (en, sr Cyrillic, ja Japanese, ar Arabic RTL, zh-CN Han) feed the runner with multi-script payloads so byte-exact round-trip across HiPlan, MCTS and Tree-of-Thoughts can be asserted independently of the OS locale.",
+  "inputs": [
+    {
+      "locale": "en",
+      "hiplan_goal": "Build a REST API with JWT authentication, OpenAPI docs and Postgres persistence",
+      "milestone_name": "Setup",
+      "milestone_description": "Bootstrap project skeleton, configure dependencies and CI gates",
+      "step_action": "scaffold-go-module",
+      "step_description": "Initialize go.mod, lay out cmd/internal/pkg directories, add Makefile targets",
+      "step_hint": "Use Go 1.25.2; pin major versions only for stdlib-adjacent deps",
+      "mcts_state": "func add(a int, b int) int { return 0 }",
+      "mcts_action_seed": "increase test coverage on add()",
+      "tot_problem": "Design a distributed cache with monotonic-read consistency",
+      "tot_thought": "Partition keyspace by consistent hashing; replicate via Raft",
+      "expected_min_runes": 30
+    },
+    {
+      "locale": "sr",
+      "hiplan_goal": "Изградити REST API са JWT аутентикацијом, OpenAPI документацијом и Postgres персистенцијом",
+      "milestone_name": "Постављање",
+      "milestone_description": "Иницијализација пројекта, конфигурација зависности и CI капија",
+      "step_action": "иницијализуј-го-модул",
+      "step_description": "Креирај go.mod, директоријуме cmd/internal/pkg и Makefile циљеве",
+      "step_hint": "Користи Go 1.25.2; закључај верзије само за стандардне библиотеке",
+      "mcts_state": "функција саберИ(а цео, б цео) цео { врати 0 }",
+      "mcts_action_seed": "повећај покривеност тестова за саберИ()",
+      "tot_problem": "Дизајнирај дистрибуиран кеш са монотоно-читалачком конзистенцијом",
+      "tot_thought": "Партиционирај простор кључева конзистентним хеширањем; реплицирај Raft протоколом",
+      "expected_min_runes": 30
+    },
+    {
+      "locale": "ja",
+      "hiplan_goal": "JWT認証、OpenAPIドキュメント、Postgres永続化を備えたREST APIを構築する",
+      "milestone_name": "セットアップ",
+      "milestone_description": "プロジェクトの骨格を作成し、依存関係とCIゲートを構成する",
+      "step_action": "ゴーモジュールを初期化",
+      "step_description": "go.modを初期化し、cmd/internal/pkgディレクトリを配置し、Makefileターゲットを追加",
+      "step_hint": "Go 1.25.2を使用し、標準ライブラリ隣接の依存関係のみメジャーバージョン固定",
+      "mcts_state": "関数 加算(a int, b int) int { return 0 }",
+      "mcts_action_seed": "加算関数のテストカバレッジを向上させる",
+      "tot_problem": "単調読み取り整合性を持つ分散キャッシュを設計する",
+      "tot_thought": "一貫性ハッシュ法でキー空間を分割し、Raftで複製する",
+      "expected_min_runes": 30
+    },
+    {
+      "locale": "ar",
+      "hiplan_goal": "إنشاء واجهة برمجة تطبيقات REST مع مصادقة JWT ووثائق OpenAPI وتخزين Postgres",
+      "milestone_name": "الإعداد",
+      "milestone_description": "تهيئة هيكل المشروع وتكوين التبعيات وبوابات التكامل المستمر",
+      "step_action": "تهيئة-وحدة-غو",
+      "step_description": "إنشاء go.mod وتخطيط أدلة cmd/internal/pkg وإضافة أهداف Makefile",
+      "step_hint": "استخدم Go 1.25.2؛ ثبّت الإصدارات الرئيسية فقط للتبعيات القريبة من المكتبة القياسية",
+      "mcts_state": "دالة جمع(أ صحيح، ب صحيح) صحيح { يُرجع 0 }",
+      "mcts_action_seed": "زيادة تغطية الاختبار لدالة الجمع",
+      "tot_problem": "صمم ذاكرة تخزين مؤقت موزعة مع ضمانات قراءة رتيبة",
+      "tot_thought": "قسّم فضاء المفاتيح بالتجزئة المتسقة؛ كرر عبر بروتوكول Raft",
+      "expected_min_runes": 30
+    },
+    {
+      "locale": "zh-CN",
+      "hiplan_goal": "构建一个具有JWT身份验证、OpenAPI文档和Postgres持久化的REST API",
+      "milestone_name": "设置",
+      "milestone_description": "搭建项目骨架，配置依赖关系和持续集成检查点",
+      "step_action": "初始化-go-模块",
+      "step_description": "初始化go.mod，搭建cmd/internal/pkg目录结构，添加Makefile目标",
+      "step_hint": "使用Go 1.25.2；仅对接近标准库的依赖锁定主版本号",
+      "mcts_state": "函数 加法(a int, b int) int { return 0 }",
+      "mcts_action_seed": "提高加法函数的测试覆盖率",
+      "tot_problem": "设计具有单调读一致性保证的分布式缓存",
+      "tot_thought": "使用一致性哈希对键空间进行分区；通过Raft协议进行复制",
+      "expected_min_runes": 30
+    }
+  ]
+}

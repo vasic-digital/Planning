@@ -271,6 +271,72 @@ go build ./...
 go test ./... -count=1 -race
 ```
 
+### Round-270 deep-doc challenge runner
+
+```bash
+# Build + run the multi-locale challenge runner (5 locales × 4 sections)
+cd Planning && go run ./challenges/runner/ -fixtures tests/fixtures/planning/payloads.json
+
+# Paired-mutation gate (clean exit 0, --anti-bluff-mutate exit 99)
+bash challenges/scripts/planning_describe_challenge.sh
+bash challenges/scripts/planning_describe_challenge.sh --anti-bluff-mutate
+```
+
+## Anti-bluff guarantees (round-270)
+
+> Verbatim 2026-05-19 operator mandate: *"all existing tests and
+> Challenges do work in anti-bluff manner - they MUST confirm that
+> all tested codebase really works as expected! We had been in
+> position that all tests do execute with success and all
+> Challenges as well, but in reality the most of the features does
+> not work and can't be used! This MUST NOT be the case and
+> execution of tests and Challenges MUST guarantee the quality, the
+> completition and full usability by end users of the product!"*
+
+Every PASS produced by this module's tests + challenges carries
+positive runtime evidence under Article XI §11.9 + CONST-035. In
+particular, round-270 introduces:
+
+- **Multi-locale runner** (`challenges/runner/main.go`) — drives
+  `HiPlan.CreatePlan`/`ExecutePlan`/`ExecuteStep`/`Add/GetFromLibrary`,
+  `MCTS.Search`/`UCTValue`/`MCTSNode.AverageReward`+`AddReward`,
+  `TreeOfThoughts.Solve` across all three search strategies (bfs +
+  dfs + beam), plus the `i18n.Translator`/`NoopTranslator`/`Default`
+  surface, with byte-equality assertions for Goal / Milestone.Name /
+  Step.Description / Outputs.description / Milestone.Description (via
+  library retrieval) / MCTS action seeds / ToT thought content across
+  5 locales (en Latin, sr Cyrillic, ja Japanese, ar Arabic RTL,
+  zh-CN Han).
+- **Symbol → exerciser ledger** (`docs/test-coverage.md`) — every
+  exported type / function / method / constant in `planning/*.go`
+  and `pkg/i18n/translator.go` is mapped to either a unit test or
+  a runner section. No symbol may PASS without a runtime exerciser.
+- **Paired-mutation gate** (`challenges/scripts/planning_describe_challenge.sh`)
+  — exit 0 on a clean tree, exit 99 with `--anti-bluff-mutate` when
+  the ledger is mutated (`CreatePlan` → `CreatePlan_MUTATED`). Proves
+  the gate actually catches ledger-vs-source drift instead of
+  rubber-stamping it.
+- **Bilingual fixture** (`tests/fixtures/planning/payloads.json`) —
+  5-locale payload set; no goal, milestone, step, MCTS state, or ToT
+  problem string is hardcoded in the runner.
+
+Bluff taxonomy coverage:
+
+- **Wrapper bluff** — describe-challenge wrapper uses PASS/FAIL
+  counters with a guard, never inline arithmetic on a command that
+  prints + exits non-zero.
+- **Contract bluff** — every advertised ToT search strategy (bfs,
+  dfs, beam) is exercised per locale; every public HiPlan / MCTS /
+  ToT constructor + method is exercised by the runner or unit suite.
+- **Structural bluff** — no `check_file_exists` PASS without a
+  paired functional assertion. Every PASS carries a rune count, a
+  byte-equality check, a boolean expected/got, or a numeric-field
+  comparison.
+- **Comment bluff** — the README's Anti-bluff guarantees section is
+  enforced by `planning_describe_challenge.sh` Section 5.
+- **Skip bluff** — runner has no dead branches and never calls
+  `t.Skip`.
+
 ## Integration with HelixAgent
 
 Planning connects to HelixAgent through the adapter at `internal/adapters/planning/`:

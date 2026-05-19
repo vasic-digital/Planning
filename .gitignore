@@ -1,34 +1,74 @@
-# Binaries
+# CONST-053 hardened .gitignore — round-270.
+#
+# Forbidden-from-version-control classes per constitution §11.4.30:
+#   1. Build artefacts        4. Sensitive-data files
+#   2. Cache files            5. Generated reports/logs
+#   3. Temp files             6. OS/IDE personal state
+
+# ----- 1. Build artefacts -----
+/bin/
+/build/
+/dist/
+/out/
+target/
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
+*.a
+*.o
+*.class
+*.pyc
 
 # Test binary
 *.test
 
-# Output
-*.out
+# ----- 2. Cache files -----
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+.next/
+.cache/
+.gradle/
+.terraform/
 
-# Coverage
-coverage.html
-coverage.out
-
-# IDE
-.idea/
-.vscode/
+# ----- 3. Temp files -----
+*.tmp
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
 Thumbs.db
+*.orig
+*.rej
+
+# ----- 4. Sensitive-data files -----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+id_rsa*
+id_ed25519*
+.netrc
+secrets/
+api_keys.sh
+
+# ----- 5. Generated reports/logs -----
+*.log
+*.out
+coverage.html
+coverage.out
+htmlcov/
+
+# ----- 6. OS/IDE personal state -----
+.idea/
+.history/
+.vscode/
 
 # Vendor (if not checked in)
 # vendor/
-
-# Build
-/bin/
-/dist/
